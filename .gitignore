@@ -1,3 +1,6 @@
+### Local git hooks ###
+.githooks/
+
 ### macOS ###
 # General
 .DS_Store
