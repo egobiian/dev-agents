@@ -1,5 +1,7 @@
 # dev-agents
 
+**English** · [Español](README.es.md)
+
 A collection of AI agents and skills for software development, organized by stack, to copy into your own projects as plain files. It is under development: sections, names and contents may still change.
 
 ## Sections

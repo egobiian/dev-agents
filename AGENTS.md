@@ -49,9 +49,13 @@ Subagents follow the [Claude Code subagent format](https://code.claude.com/docs/
 ## Adding a section
 
 1. Create `<section>/` with a lowercase, hyphenated name, containing `agents/`, `skills/` and a `README.md` modeled on `core/README.md`.
-2. Add the section to the tables in the root `README.md`.
+2. Add the section to the table in the root `README.md` and in `README.es.md`.
 
 A section holds what is specific to one stack. Anything that applies regardless of stack goes in `core`.
+
+## The two READMEs
+
+`README.md` and `README.es.md` are the same document in English and in Spanish. Change them together, section by section, so neither says something the other does not. Each links to the other on its first line after the title. Everything else in the repo is written in English.
 
 ## Section README rows
 
