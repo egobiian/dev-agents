@@ -12,7 +12,7 @@ A collection of Claude Code subagents and Agent Skills, grouped into sections by
 templates/              starting points for new agents and skills
 ```
 
-Nothing lives under `.claude/`, so nothing in this repo is active while you work on it. Consumers copy files into the `.claude/agents/` and `.claude/skills/` (or `.agents/skills/`) directories of their own projects.
+No agent or skill lives under `.claude/`, so none of them is active while you work on this repo; `.claude/` holds only the settings for working here. Consumers copy files into the `.claude/agents/` and `.claude/skills/` (or `.agents/skills/`) directories of their own projects.
 
 Keep `agents/` and `skills/` flat. An installed skill has to sit directly under `.claude/skills/`, so a subfolder inside `skills/` would install where it is never found. Group related items with a shared name prefix such as `git-` or `pr-`. When a topic outgrows its section, give it a section of its own rather than a subfolder.
 
@@ -59,6 +59,18 @@ A section holds what is specific to one stack. Anything that applies regardless 
 | [name](agents/name.md) | One-line summary of what it does |
 | [name](skills/name/SKILL.md) | One-line summary of what it does |
 ```
+
+## Commits
+
+One line and nothing else: `<type>: <description>`.
+
+- The type is one of `build` `chore` `ci` `docs` `feat` `fix` `perf` `refactor` `revert` `style` `test`.
+- No scope and no `!` marker. The description starts lowercase and has no trailing period. 72 characters at most.
+- No body, no footers and no trailers. Never add a `Co-Authored-By:` line or any other attribution.
+
+Commits are signed. Never pass `--no-gpg-sign`, and never bypass a git hook with `--no-verify`.
+
+Hooks are local to each clone: `.githooks/` is git-ignored. The `git-commit-hook` skill in `core/skills/` installs the hook that enforces this convention.
 
 ## Before finishing
 
