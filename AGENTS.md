@@ -36,6 +36,8 @@ Skills follow the [Agent Skills specification](https://agentskills.io/specificat
 5. Keep `SKILL.md` under 500 lines. Put detailed docs in `references/`, executable code in `scripts/` and templates or data in `assets/`. Link them from `SKILL.md` with relative paths, one level deep.
 6. Add a row to the section `README.md`.
 
+A script that several skills need is copied into each of them, so that every skill still works when it is copied on its own. `pixelkit.py` is the same file in the `scripts/` folder of `pixel-art-palette`, `pixel-art-draw` and `pixel-art-verify-assets`. Change the copies together.
+
 ## Adding a subagent
 
 Subagents follow the [Claude Code subagent format](https://code.claude.com/docs/en/sub-agents).
@@ -45,7 +47,8 @@ Subagents follow the [Claude Code subagent format](https://code.claude.com/docs/
 3. List only the tools the agent needs in `tools`. A read-only reviewer gets `Read, Grep, Glob`, not the full set.
 4. Leave `model` out unless the agent needs a specific one. Frontmatter fields are camelCase and case-sensitive.
 5. Write the body as a self-contained system prompt. A subagent receives only that body plus basic environment details, so it knows nothing about this repo or the conversation that invoked it.
-6. Add a row to the section `README.md`.
+6. When the agent works with a skill of its own section, list that skill in `skills` so that it is preloaded, and say in the body where to find it when it is not. The section `README.md` then says that the section is to be copied whole.
+7. Add a row to the section `README.md`.
 
 ## Adding a section
 
@@ -85,3 +88,4 @@ The hooks are committed in `.githooks/`: `commit-msg` enforces this convention a
 - Check that the section `README.md` lists every agent and skill in the section and nothing that was removed.
 - Check that no name is used twice: `grep -rh '^name:' --include='*.md' . | sort | uniq -d` prints nothing.
 - If you changed a hook, check that the two copies still match: `cmp .githooks/commit-msg core/skills/git-commit-hook/assets/commit-msg` prints nothing.
+- If you changed `pixelkit.py`, check that its copies still match: `for f in pixel-art/skills/*/scripts/pixelkit.py; do cmp "$f" pixel-art/skills/pixel-art-palette/scripts/pixelkit.py; done` prints nothing.
