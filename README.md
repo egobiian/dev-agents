@@ -11,6 +11,7 @@ A collection of AI agents and skills for software development, organized by stac
 | [core](core/README.md) | Any project: git workflow and pre-commit checks |
 | [astro](astro/README.md) | [Astro](https://astro.build) projects |
 | [godot](godot/README.md) | [Godot](https://godotengine.org) game projects |
+| [pixel-art](pixel-art/README.md) | Pixel art for games: style guide, palette, drawing and checks |
 | [python](python/README.md) | Python projects |
 
 Each section has an `agents/` folder with [Claude Code subagents](https://code.claude.com/docs/en/sub-agents) and a `skills/` folder with skills in the [Agent Skills](https://agentskills.io/specification) format. Its `README.md` lists what is inside.

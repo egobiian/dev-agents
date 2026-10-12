@@ -4,6 +4,8 @@ Agents and skills for [Godot 4](https://godotengine.org) projects. Names in this
 
 They expect the Godot editor binary to be installed: the agents verify their work by running the engine, not by reading their own code. Everything here was written and tested against Godot 4.7.
 
+For the art itself — style guide, palette, drawing and checking sprites — see the [pixel-art](../pixel-art/README.md) section.
+
 ## Agents
 
 | Agent | What it does |
