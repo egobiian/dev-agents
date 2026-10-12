@@ -10,6 +10,7 @@ A collection of Claude Code subagents and Agent Skills, grouped into sections by
   agents/<name>.md      subagents
   skills/<name>/        skills, each with a SKILL.md
 templates/              starting points for new agents and skills
+.githooks/              git hooks for this repo, which consumers can copy too
 ```
 
 No agent or skill lives under `.claude/`, so none of them is active while you work on this repo; `.claude/` holds only the settings for working here. Consumers copy files into the `.claude/agents/` and `.claude/skills/` (or `.agents/skills/`) directories of their own projects.
@@ -74,10 +75,13 @@ One line and nothing else: `<type>: <description>`.
 
 Commits are signed. Never pass `--no-gpg-sign`, and never bypass a git hook with `--no-verify`.
 
-Hooks are local to each clone: `.githooks/` is git-ignored. The `git-commit-hook` skill in `core/skills/` installs the hook that enforces this convention.
+The hooks are committed in `.githooks/`: `commit-msg` enforces this convention and `pre-push` refuses unsigned commits. A clone runs neither until `git config core.hooksPath .githooks` is run in it. `.githooks/README.md` covers the setup, here and in any repository the hooks are copied to.
+
+`.githooks/commit-msg` and `core/skills/git-commit-hook/assets/commit-msg` are the same file, kept in two places so the skill stays self-contained when it is copied. Change them together. A change under `.githooks/` runs on the machine of everyone who has turned the hooks on, so review it as code.
 
 ## Before finishing
 
 - Validate each skill you added or changed: `agentskills validate <section>/skills/<name>`. The CLI comes from `pip install skills-ref`; install it in a virtual environment.
 - Check that the section `README.md` lists every agent and skill in the section and nothing that was removed.
 - Check that no name is used twice: `grep -rh '^name:' --include='*.md' . | sort | uniq -d` prints nothing.
+- If you changed a hook, check that the two copies still match: `cmp .githooks/commit-msg core/skills/git-commit-hook/assets/commit-msg` prints nothing.
