@@ -27,6 +27,18 @@ curl -fsSL https://codeload.github.com/egobiian/dev-agents/tar.gz/refs/heads/mai
 
 Replace `core` with the section you want, and `.claude` with another destination such as `~/.claude` to have them in all your projects. The files arrive as plain copies with no link to this repository. Run the command again to update them.
 
+## Get the git hooks with curl
+
+Run this from the root of your repository. It copies the two git hooks this repository uses into `.githooks/` and tells git to run them:
+
+```bash
+curl -fsSL https://codeload.github.com/egobiian/dev-agents/tar.gz/refs/heads/main \
+  | tar -xz --strip-components=1 dev-agents-main/.githooks
+git config core.hooksPath .githooks
+```
+
+`commit-msg` rejects any commit message that is not one line of the form `<type>: <description>`, and `pre-push` rejects commits with no signature. What each one expects is in [.githooks/README.md](.githooks/README.md), which is copied along with them.
+
 ## Adding to the collection
 
 The conventions for adding agents, skills and sections are in [AGENTS.md](AGENTS.md).

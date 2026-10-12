@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# Refuse to push commits that carry no signature.
+#
+# This checks that the signature header is present, not that it verifies.
+# Verifying shells out to gpg or ssh-keygen, and those report a failure when the
+# tool is merely absent rather than when the commit is unsigned — a push blocked
+# over a missing binary is a false alarm, and a gate that cries wolf gets
+# bypassed. Presence of the header is what this gate is actually about; whether
+# the signature is trusted is the forge's job, where the key is registered.
+#
+# Both formats land in the same header, so this covers SSH and PGP alike.
+#
+# Enabled by `git config core.hooksPath .githooks`.
+
+set -u
+
+# Built from a real hash so the width follows the repository's object format
+# instead of assuming sha1.
+zero=$(git hash-object --stdin </dev/null | sed 's/./0/g')
+unsigned=''
+
+while read -r _local_ref local_oid _remote_ref remote_oid; do
+	# Deleting a remote ref: no commits travel, nothing to check.
+	[ "$local_oid" = "$zero" ] && continue
+
+	if [ "$remote_oid" = "$zero" ]; then
+		# The ref is new on the remote, so there is no upstream tip to diff
+		# against: take everything that is not already published anywhere.
+		range="$local_oid --not --remotes"
+	else
+		range="$remote_oid..$local_oid"
+	fi
+
+	for oid in $(git rev-list $range); do
+		# Stop reading at the blank line that ends the header block, so a
+		# message body beginning with "gpgsig" cannot pass itself off as one.
+		if ! git cat-file commit "$oid" | sed -n '/^$/q;p' | grep -q '^gpgsig'; then
+			unsigned="$unsigned $oid"
+		fi
+	done
+done
+
+[ -n "$unsigned" ] || exit 0
+
+echo "" >&2
+echo "push rejected — these commits are not signed:" >&2
+echo "" >&2
+for oid in $unsigned; do
+	git --no-pager log -1 --format='  %h  %an  %s' "$oid" >&2
+done
+echo "" >&2
+echo "Fix the latest commit with:" >&2
+echo "    git commit --amend --no-edit -S" >&2
+echo "" >&2
+echo "Or re-sign a whole range, where <base> is the last signed commit:" >&2
+echo "    git rebase --exec 'git commit --amend --no-edit -S' <base>" >&2
+echo "" >&2
+
+exit 1
