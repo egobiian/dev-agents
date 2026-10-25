@@ -82,3 +82,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+### Local ###
+# Notes that name paths on this machine, such as audio/tool.local.md
+*.local.md

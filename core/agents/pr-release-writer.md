@@ -24,8 +24,9 @@ If the user asks you to pick a version, say that the choice is theirs and ask wh
 2. Collect the range: `git log <since>..develop --oneline`, and `git log <since>..develop --merges` for the merged PRs.
 3. Commit subjects say what changed, not why. For the *why* behind each change, read the merged PR descriptions: `gh pr list --state merged --base develop --limit 50`, then `gh pr view <n>` on the relevant ones. That is where rationale and metrics live.
 4. Get the shape of the change: `git diff <since>..develop --stat`.
-5. Group each change by its commit type — `feat:` to Features, `fix:` to Bug Fixes, `perf:` to Performance. Drop housekeeping noise (`style:`, `chore:` dependency bumps with no visible effect) unless it matters for deployment.
-6. Write, self-check, present. Open with `gh pr create --base main --head develop` only if asked.
+5. Check the range for anything that must not reach `main`: files the ignore rules cover, local-only files such as `.env` or `*.local.*`, build output, absolute local paths, email addresses, tokens, keys and passwords. Read `git log -p <since>..develop`, not only the final diff: a secret added and later removed is still in the history that merges. If you find any, stop and report it.
+6. Group each change by its commit type — `feat:` to Features, `fix:` to Bug Fixes, `perf:` to Performance. Drop housekeeping noise (`style:`, `chore:` dependency bumps with no visible effect) unless it matters for deployment.
+7. Write, self-check, present. Open with `gh pr create --base main --head develop` only if asked.
 
 ## Title
 

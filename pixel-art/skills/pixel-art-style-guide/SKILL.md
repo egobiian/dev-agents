@@ -1,6 +1,6 @@
 ---
 name: pixel-art-style-guide
-description: Writes and maintains the pixel-art style guide of a game — the document that fixes resolution, tile and sprite sizes, perspective, palette, light direction, outlines, shading, animation timing and file conventions, so that art made at different times still looks like one game. Use when starting the art of a game, when defining or changing its visual style, when sprites from different sources or sessions do not match, or before asking anyone to draw. Turns each decision into a rule that can be checked, and says which existing art a change invalidates.
+description: Writes and maintains the pixel-art style guide of a game — the document that fixes resolution, tile and sprite sizes, perspective, palette, light direction, outlines, shading, animation timing, file conventions and, for art made with an AI generator, the settings every generation uses, so that art made at different times still looks like one game. Use when starting the art of a game, when defining or changing its visual style, when sprites from different sources or sessions do not match, or before asking anyone to draw or generate art. Turns each decision into a rule that can be checked, and says which existing art a change invalidates.
 ---
 
 # Write a pixel-art style guide
@@ -83,6 +83,16 @@ A rule earns its place when it can be checked: by a script, or by looking at a s
 
 - The fonts and the sizes they are used at, in whole multiples of their design size.
 - Icon sizes, and how panels and buttons are drawn.
+
+**Generation**
+
+Only when art is made with an AI generator. Separate generations drift faster than separate drawings, so the guide fixes what every call passes:
+
+- The tool for each kind of asset, and the settings passed on every call: view, outline, shading, detail, canvas size.
+- The words every description ends with, stating the look in a few plain phrases. Describe the look in the game's own words: a prompt that names another game, artist or brand imitates someone else's work.
+- Which accepted asset is the style reference for each kind: the first character for every other character, the first tileset for the next.
+- How a result is brought onto the palette, and what is cleaned by hand afterwards.
+- Where the record of how each asset was made is kept, and where the generator's ids are kept. Ids identify an account: they stay in a local file that is never committed.
 
 **Files**
 

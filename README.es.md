@@ -6,15 +6,28 @@ Una colección de agentes y skills de IA para el desarrollo de software, organiz
 
 ## Secciones
 
+**Cualquier proyecto**
+
 | Sección | Para |
 | :- | :- |
-| [core](core/README.md) | Cualquier proyecto: flujo de git y comprobaciones previas al commit |
+| [core](core/README.md) | Flujo de git y comprobaciones previas al commit |
+
+**Lenguajes y frameworks**
+
+| Sección | Para |
+| :- | :- |
 | [astro](astro/README.md) | Proyectos con [Astro](https://astro.build) |
-| [godot](godot/README.md) | Videojuegos con [Godot](https://godotengine.org) |
-| [pixel-art](pixel-art/README.md) | Pixel art para videojuegos: guía de estilo, paleta, dibujo y comprobaciones |
 | [python](python/README.md) | Proyectos con Python |
 
-Cada sección tiene una carpeta `agents/` con [subagentes de Claude Code](https://code.claude.com/docs/en/sub-agents) y una carpeta `skills/` con skills en el formato [Agent Skills](https://agentskills.io/specification). Su `README.md` lista lo que contiene.
+**Videojuegos**
+
+| Sección | Para |
+| :- | :- |
+| [godot](godot/README.md) | Videojuegos con [Godot](https://godotengine.org): jugabilidad, interfaz, shaders, la comprobación previa al commit y niveles de plataformas 2D |
+| [pixel-art](pixel-art/README.md) | Pixel art: guía de estilo, paleta, dibujo, generación y comprobaciones |
+| [audio](audio/README.md) | Sonido hecho con modelos generativos de audio: dirección sonora, generación, procesado y bucles |
+
+Cada sección tiene una carpeta `agents/` con [subagentes de Claude Code](https://code.claude.com/docs/en/sub-agents) y una carpeta `skills/` con skills en el formato [Agent Skills](https://agentskills.io/specification). Su `README.md` lista lo que contiene, agrupado por el tipo de proyecto al que sirve.
 
 ## Descargar una sección con curl
 
@@ -27,7 +40,7 @@ curl -fsSL https://codeload.github.com/egobiian/dev-agents/tar.gz/refs/heads/mai
     dev-agents-main/core/agents dev-agents-main/core/skills
 ```
 
-Sustituye `core` por la sección que quieras, y `.claude` por otro destino como `~/.claude` para tenerlos en todos tus proyectos. Los ficheros llegan como copias sueltas, sin vínculo con este repositorio. Vuelve a ejecutar el comando para actualizarlos.
+Sustituye `core` por la sección que quieras, o pon varios pares de rutas para descargar varias secciones a la vez. Sustituye `.claude` por otro destino como `~/.claude` para tenerlos en todos tus proyectos. Los ficheros llegan como copias sueltas, sin vínculo con este repositorio. Vuelve a ejecutar el comando para actualizarlos.
 
 ## Descargar los hooks de git con curl
 
