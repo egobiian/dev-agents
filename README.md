@@ -6,16 +6,28 @@ A collection of AI agents and skills for software development, organized by stac
 
 ## Sections
 
+**Any project**
+
 | Section | For |
 | :- | :- |
-| [core](core/README.md) | Any project: git workflow and pre-commit checks |
+| [core](core/README.md) | Git workflow and pre-commit checks |
+
+**Languages and frameworks**
+
+| Section | For |
+| :- | :- |
 | [astro](astro/README.md) | [Astro](https://astro.build) projects |
-| [audio](audio/README.md) | Sound made with generative audio models: sound direction, generation, processing and loops |
-| [godot](godot/README.md) | [Godot](https://godotengine.org) game projects |
-| [pixel-art](pixel-art/README.md) | Pixel art for games: style guide, palette, drawing and checks |
 | [python](python/README.md) | Python projects |
 
-Each section has an `agents/` folder with [Claude Code subagents](https://code.claude.com/docs/en/sub-agents) and a `skills/` folder with skills in the [Agent Skills](https://agentskills.io/specification) format. Its `README.md` lists what is inside.
+**Games**
+
+| Section | For |
+| :- | :- |
+| [godot](godot/README.md) | [Godot](https://godotengine.org) games: gameplay, interface, shaders, the pre-commit gate, and 2D platformer levels |
+| [pixel-art](pixel-art/README.md) | Pixel art: style guide, palette, drawing, generation and checks |
+| [audio](audio/README.md) | Sound made with generative audio models: sound direction, generation, processing and loops |
+
+Each section has an `agents/` folder with [Claude Code subagents](https://code.claude.com/docs/en/sub-agents) and a `skills/` folder with skills in the [Agent Skills](https://agentskills.io/specification) format. Its `README.md` lists what is inside, grouped by the kind of project it is for.
 
 ## Get a section with curl
 
@@ -28,7 +40,7 @@ curl -fsSL https://codeload.github.com/egobiian/dev-agents/tar.gz/refs/heads/mai
     dev-agents-main/core/agents dev-agents-main/core/skills
 ```
 
-Replace `core` with the section you want, and `.claude` with another destination such as `~/.claude` to have them in all your projects. The files arrive as plain copies with no link to this repository. Run the command again to update them.
+Replace `core` with the section you want, or list several pairs of paths to get several sections at once. Replace `.claude` with another destination such as `~/.claude` to have them in all your projects. The files arrive as plain copies with no link to this repository. Run the command again to update them.
 
 ## Get the git hooks with curl
 

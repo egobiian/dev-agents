@@ -23,6 +23,7 @@ Keep `agents/` and `skills/` flat. An installed skill has to sit directly under 
 - Agent: the filename matches `name`. Skill: the directory name matches `name`, which the Agent Skills spec requires.
 - Names are unique across the whole repo, because every section installs into the same flat `.claude/agents/` and `.claude/skills/` directories.
 - Items in a stack section start with the section name, such as `astro-content-collections`. Items in `core` carry no section prefix.
+- Items for one kind of project inside a section add that kind after the section name, such as `godot-2d-platformer-level-check`, and the section `README.md` lists them under a heading of their own.
 - Don't reuse the name of a Claude Code built-in such as `code-review`, `init`, `Explore` or `Plan`. A project skill or agent with the same name replaces the built-in.
 
 ## Adding a skill
@@ -53,7 +54,7 @@ Subagents follow the [Claude Code subagent format](https://code.claude.com/docs/
 ## Adding a section
 
 1. Create `<section>/` with a lowercase, hyphenated name, containing `agents/`, `skills/` and a `README.md` modeled on `core/README.md`.
-2. Add the section to the table in the root `README.md` and in `README.es.md`.
+2. Add the section to the root `README.md` and to `README.es.md`, in the group of the kind of project it serves: any project, languages and frameworks, or games.
 
 A section holds what is specific to one stack. Anything that applies regardless of stack goes in `core`.
 
