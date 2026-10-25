@@ -110,6 +110,8 @@ godot --headless --path . res://levels/cave.tscn --fixed-fps 60 --quit-after 600
 
 Run the main scene, and every scene the commit touched.
 
+In a 2D platformer, a commit that changes a level, the player's movement or its tuning also runs the `godot-2d-platformer-level-check` skill on every level it can affect: running a level proves it loads, not that it can be finished.
+
 - A script error does not stop the game. The function that hit it is abandoned and everything else carries on, so one error can leave the scene in a state that no later line explains. Fix the first error first.
 - A scene that sits idle proves that it loads, not that the change works. Drive the path the commit touched: with the project's tests, or with a throwaway script run with `--script` that `extends SceneTree`, instances the scene in `_initialize()`, calls into it, lets frames pass with `await process_frame`, prints what it observes and ends with `quit(code)`.
 - Feed input with `Input.parse_input_event()` and an `InputEventAction`. `Input.action_press()` only changes what polling sees, and never reaches `_input` or `_unhandled_input`.
