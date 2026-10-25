@@ -10,6 +10,7 @@ A collection of AI agents and skills for software development, organized by stac
 | :- | :- |
 | [core](core/README.md) | Any project: git workflow and pre-commit checks |
 | [astro](astro/README.md) | [Astro](https://astro.build) projects |
+| [audio](audio/README.md) | Sound made with generative audio models: sound direction, generation, processing and loops |
 | [godot](godot/README.md) | [Godot](https://godotengine.org) game projects |
 | [pixel-art](pixel-art/README.md) | Pixel art for games: style guide, palette, drawing and checks |
 | [python](python/README.md) | Python projects |
