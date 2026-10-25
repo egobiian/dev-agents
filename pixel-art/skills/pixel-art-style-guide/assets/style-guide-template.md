@@ -77,6 +77,22 @@ Every rule below can be checked against a sprite. Where a rule has a reason, the
 - Icons: <16×16, outlined like objects>.
 - Panels: <a nine-patch with 4-pixel corners>.
 
+## Generation
+
+<Not used: all art is drawn by hand. | Art is made with <generator>, with these settings on every call.>
+
+| Kind | Tool | Settings |
+| :- | :- | :- |
+| <Characters> | <tool> | <view, outline, shading, detail, canvas size> |
+| <Animations> | <tool> | <template or custom action, directions generated> |
+| <Props> | <tool> | <palette image as colour image> |
+| <Tiles> | <tool> | <tile size, outline, shading> |
+
+- Every description ends with: `<a few plain phrases that state the look>`. No description names another game, artist or brand.
+- Style references: <the first accepted character for every other character; the first tileset for the next>.
+- After generating: <locked onto the palette in one call per set, then cleaned by hand: stray pixels, eyes, outline gaps>.
+- Record: every asset has a row in `<art/sources.md>` with its tool, description and settings. The generator's ids go only in `<art/ids.local.md>`, which git ignores.
+
 ## Files
 
 - Sources: `<art/src/>`, <format>. Exports: `<assets/>`, PNG at 1×.
