@@ -26,6 +26,7 @@ The APIs named below are those of the current 4.x releases. On an older one, fol
 - Inside a scene, hold nodes in typed `@onready` variables: `@onready var sprite: Sprite2D = $Sprite`. A wrong type then fails when the scene loads rather than at first use. Use a scene-unique name (`%Name`) for a node whose position in the tree may change. It resolves only from inside the same scene.
 - A node is a child only when it should cease to exist with its parent. What outlives the parent — a projectile, a dropped item — goes somewhere else in the tree.
 - Data that is edited in the Inspector and reused is a custom `Resource`: a `class_name`, `@export` properties, and a default value for every parameter of `_init`. Plain data that needs no file is a `RefCounted`. Neither needs to be a node.
+- Tuning numbers — speeds, jump strength, damage, timings, counts — are data, not literals inside the logic: `@export` properties, or a custom `Resource` that holds a system's values, whichever the project already uses. Then they are tuned without reading the code, and tools such as a level check can read the same values the game plays with.
 - A loaded resource is one object shared by everything that loads it. Changing it at run time changes it for every user. State that belongs to one instance needs its own copy: `duplicate()`, or `resource_local_to_scene`.
 - An autoload is for a system that owns its own data and stands alone, such as a save system or a scene switcher. It is not a place to keep whatever two scenes both need. A `static` function or variable on a `class_name` script, or a shared `Resource`, covers most of what tempts people into one.
 
@@ -34,8 +35,10 @@ The APIs named below are those of the current 4.x releases. On an older one, fol
 - Follow the typing the project uses. In a typed project every variable, parameter and return value carries a type, `-> void` included. Infer with `:=` only when the type is plain from the same line.
 - `as` returns `null` when the cast fails, with no error. Use `is` first, or a typed declaration, unless a silent `null` is what you want.
 - Follow the official style guide: `snake_case` for files, functions and variables, `PascalCase` for classes and node names, `CONSTANT_CASE` for constants and enum members, signals named in the past tense (`door_opened`), a leading underscore on what is private, tabs, double quotes, `and`/`or`/`not`. A script is ordered: annotations, `class_name`, `extends`, doc comment, signals, enums, constants, static variables, `@export` variables, other variables, `@onready` variables, then `_init`, `_enter_tree`, `_ready`, `_process`, `_physics_process`, other virtual methods, and the rest.
+- Comment what the code cannot say: a reason that is not obvious, a workaround, a unit. Unless the project documents more, no comment per function, no doc comment that restates a name, no banners and no commented-out code. Names carry the meaning.
 - Movement and anything that touches a physics body go in `_physics_process`. `move_and_slide()` applies the time step itself: set `velocity` in pixels per second and do not multiply it by `delta`. An acceleration such as gravity still is multiplied.
 - A one-off input — jump, interact, pause — is read in `_unhandled_input(event)` with `event.is_action_pressed()`, so the GUI gets the event first. A held input is polled in `_physics_process` with `Input.get_vector()` or `Input.is_action_pressed()`. Input is always a named action from the Input Map, never a hard-coded key. The `ui_*` actions belong to UI focus; gameplay gets its own.
+- Smoothing that runs every frame depends on `delta`: `lerp(current, target, 1.0 - exp(-speed * delta))`. A fixed fraction per frame, `lerp(current, target, 0.1)`, moves twice as fast at twice the frame rate.
 - Do not do every frame what a signal or a `Timer` can do once.
 - Set a node's properties before `add_child()`, not after. A setter that runs inside the tree can trigger work a fresh node does not need. Global position is the exception: it only exists once the node is in the tree.
 - `preload()` for a dependency that never changes, held in a constant. `load()` for one chosen at run time. An `@export var scene: PackedScene` for one a designer picks.
@@ -43,6 +46,16 @@ The APIs named below are those of the current 4.x releases. On an older one, fol
 - Everything can have changed after an `await`: the node may have left the tree, the target may be gone. Check again what the rest of the function relies on.
 - A collision layer is what a body is; a mask is what it looks for. Use the layer names the project defines, and set single bits with `set_collision_layer_value()` and `set_collision_mask_value()`. Resize a collision shape through the shape's own size, never by scaling the node.
 - Saves and settings are written under `user://`. `res://` is read-only in an exported game. JSON holds no `Vector2` or `Color`: convert them. Never load a `Resource` or decode objects from a file the player can replace — both can carry code that runs.
+- Play sound through what the project already has for it — an autoload, its audio buses — with volumes kept as data. A sound that does not exist yet is a file someone has to make: name the event that needs it and leave the call ready.
+
+## Light in 2D
+
+When the project lights its 2D scenes:
+
+- A `CanvasModulate` darkens everything on its canvas layer, and `PointLight2D`s light it back. A HUD on another `CanvasLayer` is not darkened.
+- What has to stay bright in the dark — eyes, fire, a pickup the player must see — gets a `CanvasItemMaterial` with its light mode set to unshaded, which leaves it out of the lighting, or a small light of its own.
+- Every light that reaches a sprite adds work for each of its pixels, and shadows add more. Web and mobile have the least to spare: keep the lights on screen few, turn shadows on only where they are part of the design, and look at the frame rate in the export, not in the editor.
+- Art for a lit scene carries no painted light of its own. A sprite drawn lit from the left looks wrong beside a lamp on its right.
 
 ## Scene and resource files
 

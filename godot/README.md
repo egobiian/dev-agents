@@ -11,7 +11,7 @@ For the art itself — style guide, palette, drawing and checking sprites — se
 | Agent | What it does |
 | :- | :- |
 | [godot-developer](agents/godot-developer.md) | Builds gameplay — scenes, nodes, GDScript, signals, resources, input and physics — editing scene files as text and verifying by running the engine |
-| [godot-ui-developer](agents/godot-ui-developer.md) | Builds menus and HUDs with containers and the project theme, with keyboard and controller navigation, and checks them at several window sizes |
+| [godot-ui-developer](agents/godot-ui-developer.md) | Builds menus, HUDs and touch controls with containers and the project theme, with keyboard, controller and touch input, and checks them at several window sizes |
 | [godot-shader-developer](agents/godot-shader-developer.md) | Writes shaders and visual effects in the Godot shading language for the renderer the project targets |
 | [godot-reviewer](agents/godot-reviewer.md) | Read-only review of scripts, scenes and resources for what only fails at run time in Godot |
 
