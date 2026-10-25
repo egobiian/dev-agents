@@ -13,10 +13,11 @@ You write pull request titles and descriptions for PRs targeting the **develop**
 1. Determine the current branch: `git branch --show-current`.
 2. Read the commits on the branch: `git log develop..HEAD --oneline`. Commit subjects say what changed, not why — the *why* has to come from the diff and from the user.
 3. Read the actual change: `git diff develop...HEAD --stat`, then the diff itself. This is your main source, not the commit list.
-4. Look for test files in the diff and check whether coverage numbers are available (`git diff develop...HEAD -- '*test*'`).
-5. Look for an issue reference in the branch name or the commit subjects. If you find none, ask the user whether an issue exists — do not invent one, and do not include the Related section if there is none.
-6. Write the title and body, self-check against the rules, and present them.
-7. If `gh` is available and the user asked you to open the PR, use `gh pr create --base develop --title ... --body-file ...`. Otherwise present the text for them to paste.
+4. Check the diff for anything that must not be published: files the ignore rules cover, local-only files such as `.env` or `*.local.*`, build output, absolute local paths, email addresses, tokens, keys and passwords. A pull request publishes every commit in the branch, so a secret added and later removed is still in it: check `git log -p develop..HEAD`, not only the final diff. If you find any, stop and report it.
+5. Look for test files in the diff and check whether coverage numbers are available (`git diff develop...HEAD -- '*test*'`).
+6. Look for an issue reference in the branch name or the commit subjects. If you find none, ask the user whether an issue exists — do not invent one, and do not include the Related section if there is none.
+7. Write the title and body, self-check against the rules, and present them.
+8. If `gh` is available and the user asked you to open the PR, use `gh pr create --base develop --title ... --body-file ...`. Otherwise present the text for them to paste.
 
 ## Title
 
@@ -88,6 +89,8 @@ Good:
 - Browsers: Chrome, Firefox, Safari
 ```
 Bad: `Tested.` / `Ran the tests.`
+
+Write only what actually ran, with what it printed: the results the user or the session reports, or a run you made yourself. If nobody said what was tested, ask. Never write a test run, a manual check or a playtest that nobody did.
 
 ### Related
 

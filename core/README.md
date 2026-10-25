@@ -6,7 +6,7 @@ Stack-agnostic agents and skills that apply to any project.
 
 | Agent | What it does |
 | :- | :- |
-| [commit-writer](agents/commit-writer.md) | Writes a single-line Conventional Commit header from the staged diff and creates the commit |
+| [commit-writer](agents/commit-writer.md) | Checks that nothing private or local-only is staged, writes a single-line Conventional Commit header from the staged diff and creates the commit |
 | [pr-develop-writer](agents/pr-develop-writer.md) | Writes the title and the What / Why / Testing description of a pull request into `develop` |
 | [pr-release-writer](agents/pr-release-writer.md) | Writes the changelog-style pull request that releases `develop` into `main` |
 
