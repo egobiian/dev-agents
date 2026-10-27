@@ -23,7 +23,7 @@ A collection of AI agents and skills for software development, organized by stac
 
 | Section | For |
 | :- | :- |
-| [godot](godot/README.md) | [Godot](https://godotengine.org) games: gameplay, interface, shaders, the pre-commit gate, and 2D platformer levels |
+| [godot](godot/README.md) | [Godot](https://godotengine.org) games: gameplay, interface, shaders, the pre-commit gate, web acceptance tests, and 2D platformer levels |
 | [pixel-art](pixel-art/README.md) | Pixel art: style guide, palette, drawing, generation and checks |
 | [audio](audio/README.md) | Sound made with generative audio models: sound direction, generation, processing and loops |
 
