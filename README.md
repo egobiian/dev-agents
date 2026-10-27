@@ -10,7 +10,7 @@ A collection of AI agents and skills for software development, organized by stac
 
 | Section | For |
 | :- | :- |
-| [core](core/README.md) | Git workflow and pre-commit checks |
+| [core](core/README.md) | Git workflow, pre-commit checks, and delegating to agents while spending few tokens |
 
 **Languages and frameworks**
 

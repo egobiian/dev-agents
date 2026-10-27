@@ -10,7 +10,7 @@ Una colección de agentes y skills de IA para el desarrollo de software, organiz
 
 | Sección | Para |
 | :- | :- |
-| [core](core/README.md) | Flujo de git y comprobaciones previas al commit |
+| [core](core/README.md) | Flujo de git, comprobaciones previas al commit, y delegar en agentes gastando pocos tokens |
 
 **Lenguajes y frameworks**
 
