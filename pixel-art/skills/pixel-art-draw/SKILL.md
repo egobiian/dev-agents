@@ -1,16 +1,14 @@
 ---
 name: pixel-art-draw
-description: Draws and edits small pixel art as text — sprites, tiles, icons, interface pieces and their animation frames — by writing a character grid that a bundled script turns into a PNG, then looking at an enlarged render and correcting it. Use when asked to draw, create, sketch, recolour, fix or animate a sprite, a tile or an icon, to make placeholder art, or to change a few pixels of an existing PNG. Keeps every pixel on the project palette. Suited to art up to about 64 by 64 pixels a frame, not to large illustrations.
+description: Draws and edits small pixel art as text - a character grid that a bundled script renders to PNG, checked on an enlarged render. Use to draw, sketch, recolour, fix or animate a sprite, tile or icon, make placeholders, or change a few pixels of a PNG. Keeps the project palette; up to about 64 by 64 pixels.
 compatibility: The bundled scripts need Python 3.8 or later. They use the standard library only.
 ---
 
 # Draw pixel art as a text grid
 
-One character is one pixel. A grid file lists which colour each character stands for, then gives each frame as rows of characters. `scripts/sprite_grid.py` turns that into a PNG at 1×, and into an enlarged copy to look at. The loop is: write the grid, render, look, correct.
+One character is one pixel. A grid file maps characters to colours, then lists each frame as rows. `scripts/sprite_grid.py` renders it to a 1x PNG and an enlarged copy to look at. Loop: write, render, look, correct. Paths to `scripts/` are relative to this skill's directory.
 
-Paths to `scripts/` are relative to this skill's own directory.
-
-The first render is a draft. Expect to go round the loop several times: shapes that seemed right as text look wrong as an image, and only the image counts.
+The first render is a draft; shapes that seemed right as text look wrong as an image, and only the image counts.
 
 ## The grid file
 
@@ -38,66 +36,56 @@ c #f4f4f4
 ............
 ```
 
-- `@palette` names the palette file, relative to the grid file. The script then refuses any colour in the key that is not in it.
-- `@key` gives one character per colour: the character, a space, then `#rrggbb` or the word `transparent`. Any visible character except `@` can be used.
-- `@frame` starts a frame, with an optional name. Every line after it is one row, one character per pixel. All frames have the same width and height.
-- `//` comments are allowed before the first frame only.
+- `@palette` names the palette file, relative to the grid file; the script then refuses any key colour not in it.
+- `@key`: one line per colour, character, space, then `#rrggbb` or `transparent`. Any visible character except `@`.
+- `@frame` starts a frame (optional name); each following line is a row. All frames share one width and height.
+- `//` comments only before the first frame.
 
-Use the same character for the same colour in every grid of a project. The `dump` command names characters after the order of the palette file — `0` for the first colour, `1` for the second — so follow that.
+Use the same character for the same colour in every grid. `dump` names characters by palette order (`0` first colour, `1` second); follow that.
 
 ## Procedure
 
-1. **Read the rules.** The style guide and the palette decide the canvas size, the light direction, the outline, how many shades a material gets. With no style guide, look at the art that exists and match it.
-
-2. **Read existing art as text.** This is the fastest way to learn how the project draws:
+1. **Read the rules**: the style guide and palette set canvas, light, outline and shades per material. Without a guide, match the existing art.
+2. **Read existing art as text**:
 
    ```bash
    python3 scripts/sprite_grid.py dump assets/sprites/hero.png --frame 16x16 --palette art/palette.hex
    python3 scripts/sprite_grid.py preview assets/sprites/hero.png --out /tmp/hero.png
    ```
 
-   The dump shows where the outline breaks, how wide a highlight is, which ramp a material uses. To change existing art, dump it to a file with `--out`, edit that, and render it back.
-
-3. **Plan on the grid before typing rows.** Decide the bounding box of the subject, and the row it stands on. Decide where the light comes from, and which ramp each material uses. For anything symmetrical, decide whether the width is even or odd: an even width has no centre column.
-
-4. **Write the grid**, silhouette first. Fill the shape with flat colour, check it, and only then shade.
-
-5. **Render and look.**
+   To change existing art, dump it to a file with `--out`, edit, and render back.
+3. **Plan before typing**: bounding box, standing row, light direction, ramp per material; for symmetry, even or odd width (even has no centre column).
+4. **Write the grid**, silhouette first in flat colour, then shade.
+5. **Render and look**:
 
    ```bash
    python3 scripts/sprite_grid.py render potion.grid.txt --out assets/items/potion.png --preview /tmp/potion.png
    ```
 
-   Open the preview. It is enlarged with hard edges, and shows transparency as a grey checkerboard with one check per art pixel. Judge the image: never judge the shape from the text, where characters are taller than they are wide and every sprite looks stretched.
-
-6. **Correct and repeat.** The script reports the line and column of a row that is too short or of a character missing from the key, and writes nothing until the grid is valid. It also prints how many pixels use each colour: a key entry used by two pixels is probably a mistake.
-
-7. **Check it against its background.** Render the preview on a colour the art will be seen against, with `--background 257179`. A sprite that reads well on grey can vanish on the game's own background.
-
-8. **Deliver.** The PNG at 1× goes where the project keeps its art. Never deliver the preview. Keep the grid file only if the project keeps source files, and where it keeps them; otherwise delete it and say so.
+   The preview is enlarged with hard edges and a grey checkerboard, one check per art pixel.
+6. **Correct and repeat.** The script reports the line and column of a short row or a character missing from the key, and writes nothing until the grid is valid. It prints pixels per colour: a key entry used by two pixels is probably a mistake. These counts are the cheap check; look at the preview once per round.
+7. **Check the background**: `--background 257179` previews on a colour the art will be seen against.
+8. **Deliver** the 1x PNG where the project keeps its art, never the preview. Keep the grid only if the project keeps sources, where it keeps them; otherwise delete it and say so.
 
 ## Drawing rules
 
-- **Silhouette first.** If the filled shape alone does not say what the thing is, no shading will.
-- **Clusters, not pixels.** Shade in connected patches of colour. A single pixel on its own is noise, unless it is a deliberate detail such as an eye or a glint.
-- **One light.** Highlights go on the side the light comes from and shadows on the other, on every part of the sprite. Shading that darkens towards the outline all the way round is pillow shading.
-- **Few shades.** Two to four per material, taken from one ramp of the palette, in ramp order. A darker shade is the next colour down the ramp, never a new colour.
-- **Clean lines.** A one-pixel line never doubles up at a corner. The steps of a curve change length in order — 1, 1, 2, 3 — never back and forth.
-- **No banding.** Do not stack bands of shade that follow each other a pixel apart. Vary where the shade boundaries fall.
-- **Hard outer edge.** No lighter fringe pixels to smooth the outside of a sprite. The background is not known, and the fringe shows.
-- **Readable beats detailed.** At 16 pixels, three shapes that read are worth more than ten that do not.
+- Silhouette first.
+- Shade in clusters; a lone pixel is noise unless a deliberate detail.
+- One light on every part; darkening towards the outline all round is pillow shading.
+- Two to four shades per material from one ramp, in ramp order, never a new colour.
+- Curve steps change length in order (1, 1, 2, 3); no doubled pixels at corners; no banding; hard outer edge without fringe pixels.
+- Readable beats detailed.
 
 ## Animation
 
-- All frames go in one grid file, in order. They render as one sheet: a single row, or `--columns N` frames per row.
-- Copy the previous frame and change it. Redrawing a frame from scratch loses the volume.
-- Change as little as the motion needs. The feet stay on the same row unless the character leaves the ground.
-- Look at the frames side by side in the preview. A part that changes size or shade between frames, when that is not the motion, is the usual fault.
+- All frames go in one grid file, rendered as one sheet: a single row, or `--columns N` per row.
+- Copy the previous frame and change it; keep grounded feet on one row; change only what the motion needs.
+- Look at the frames side by side for parts changing size or shade.
 
 ## Limits
 
-- A grid holds opaque and fully transparent pixels only. Partly transparent art cannot be dumped or drawn this way.
-- Past about 64 by 64 pixels a frame the rows are too long to keep straight. Work in pieces, or say that the job needs an editor and a person.
-- The script checks the key against the palette. It does not check the drawing: that is what looking at the preview is for.
+- Opaque and fully transparent pixels only; partly transparent art cannot be dumped or drawn this way.
+- Past about 64 by 64 pixels a frame, work in pieces or say the job needs an editor and a person.
+- The script checks the key against the palette, not the drawing.
 
-`sprite_grid.py --help` lists every option. Exit code 1 means a problem in the grid or the image, and nothing was written. Exit code 2 means a bad argument or an unreadable file.
+`sprite_grid.py --help` lists every option. Exit 1: problem in the grid or image, nothing written. Exit 2: bad argument or unreadable file.
