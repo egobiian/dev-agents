@@ -14,8 +14,9 @@ For the art itself — style guide, palette, drawing and checking sprites — se
 | [godot-ui-developer](agents/godot-ui-developer.md) | Builds menus, HUDs and touch controls with containers and the project theme, with keyboard, controller and touch input, and checks them at several window sizes |
 | [godot-shader-developer](agents/godot-shader-developer.md) | Writes shaders and visual effects in the Godot shading language for the renderer the project targets |
 | [godot-reviewer](agents/godot-reviewer.md) | Read-only review of scripts, scenes and resources for what only fails at run time in Godot |
+| [godot-web-acceptance-tester](agents/godot-web-acceptance-tester.md) | Exports to the web and drives the game in headless Chromium with Playwright like a player, asserting on a probe's state instead of pixels |
 
-The three builders split the work by the kind of file: gameplay scenes and scripts, Control scenes and themes, and shaders. The reviewer reads what they produce and changes nothing.
+The three builders split the work by the kind of file: gameplay scenes and scripts, Control scenes and themes, and shaders. The reviewer reads what they produce and changes nothing. The acceptance tester checks a requested feature the way a player would, after the pre-commit gate passes; it needs Node and the game's web export.
 
 | Skill | What it does |
 | :- | :- |
