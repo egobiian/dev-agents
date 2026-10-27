@@ -18,3 +18,6 @@ The three git agents are designed to be used together: commits stay header-only 
 | :- | :- |
 | [git-commit-hook](skills/git-commit-hook/SKILL.md) | Installs the `commit-msg` hook that enforces the header-only commit convention `commit-writer` follows |
 | [verify-build](skills/verify-build/SKILL.md) | Pre-commit gate: runs the project's own type check, lint, tests and build in order, then exercises what changed |
+| [delegate-work](skills/delegate-work/SKILL.md) | How a main session briefs subagents, picks models, keeps reads and reports short, and spends paid generations through mock-up, pilot and production |
+
+`delegate-work` carries a short block of standing rules (`assets/claude-md-snippet.md`) to paste into a project's `CLAUDE.md` or `AGENTS.md`, and a brief template for subagents.

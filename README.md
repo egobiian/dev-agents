@@ -10,7 +10,7 @@ A collection of AI agents and skills for software development, organized by stac
 
 | Section | For |
 | :- | :- |
-| [core](core/README.md) | Git workflow and pre-commit checks |
+| [core](core/README.md) | Git workflow, pre-commit checks, and delegating to agents while spending few tokens |
 
 **Languages and frameworks**
 
@@ -23,7 +23,7 @@ A collection of AI agents and skills for software development, organized by stac
 
 | Section | For |
 | :- | :- |
-| [godot](godot/README.md) | [Godot](https://godotengine.org) games: gameplay, interface, shaders, the pre-commit gate, and 2D platformer levels |
+| [godot](godot/README.md) | [Godot](https://godotengine.org) games: gameplay, interface, shaders, the pre-commit gate, web acceptance tests, 2D platformer levels, and isometric and top-down levels |
 | [pixel-art](pixel-art/README.md) | Pixel art: style guide, palette, drawing, generation and checks |
 | [audio](audio/README.md) | Sound made with generative audio models: sound direction, generation, processing and loops |
 

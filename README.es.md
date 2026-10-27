@@ -10,7 +10,7 @@ Una colección de agentes y skills de IA para el desarrollo de software, organiz
 
 | Sección | Para |
 | :- | :- |
-| [core](core/README.md) | Flujo de git y comprobaciones previas al commit |
+| [core](core/README.md) | Flujo de git, comprobaciones previas al commit, y delegar en agentes gastando pocos tokens |
 
 **Lenguajes y frameworks**
 
@@ -23,7 +23,7 @@ Una colección de agentes y skills de IA para el desarrollo de software, organiz
 
 | Sección | Para |
 | :- | :- |
-| [godot](godot/README.md) | Videojuegos con [Godot](https://godotengine.org): jugabilidad, interfaz, shaders, la comprobación previa al commit y niveles de plataformas 2D |
+| [godot](godot/README.md) | Videojuegos con [Godot](https://godotengine.org): jugabilidad, interfaz, shaders, la comprobación previa al commit, pruebas de aceptación en web, niveles de plataformas 2D y niveles isométricos y vistos desde arriba |
 | [pixel-art](pixel-art/README.md) | Pixel art: guía de estilo, paleta, dibujo, generación y comprobaciones |
 | [audio](audio/README.md) | Sonido hecho con modelos generativos de audio: dirección sonora, generación, procesado y bucles |
 

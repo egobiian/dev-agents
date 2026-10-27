@@ -1,87 +1,58 @@
 ---
 name: git-commit-hook
-description: Installs a commit-msg git hook that enforces single-line Conventional Commit headers — a known type, no scope, no "!" marker, a lowercase description, no trailing period, 72 characters at most, and no body, footers or trailers. Use when setting up a repository, when asked to enforce the commit convention or to add a commit hook, or when commits that break the convention are getting through.
+description: Installs a commit-msg git hook enforcing single-line Conventional Commit headers — known type, no scope or "!" marker, lowercase description, no trailing period, 72 characters, no body, footers or trailers. Use when setting up a repository, adding a commit hook, enforcing the commit convention, or when bad commit messages get through.
 ---
 
 # Install the commit message hook
 
-The hook in [assets/commit-msg](assets/commit-msg) rejects any commit whose message is not exactly:
-
-```
-<type>: <description>
-```
-
-It checks the mechanical rules only: the type is one of `build` `chore` `ci` `docs` `feat` `fix` `perf` `refactor` `revert` `style` `test`, there is no scope and no `!` marker, the description starts lowercase and has no trailing period, the header is 72 characters at most, and the message is a single line. That last rule is what keeps bodies, footers and `Co-Authored-By:` trailers out of the history. Imperative mood and whether the description is worth reading are left to review.
-
-Merge commits and the `fixup!`, `squash!` and `amend!` markers pass untouched. The hook needs only POSIX `sh` and git.
+The hook in [assets/commit-msg](assets/commit-msg) rejects any commit whose message is not exactly `<type>: <description>`. It checks the mechanical rules only: type in `build` `chore` `ci` `docs` `feat` `fix` `perf` `refactor` `revert` `style` `test`; no scope, no `!`; lowercase description without a trailing period; 72 characters at most; a single line, which keeps bodies, footers and `Co-Authored-By:` trailers out. Mood and quality are left to review. Merge commits and `fixup!`, `squash!`, `amend!` pass. It needs only POSIX `sh` and git.
 
 ## Before installing
 
-1. Check whether the repository already manages hooks: run `git config --get core.hooksPath`, and look for `.husky/`, `lefthook.yml` or `.pre-commit-config.yaml`.
-2. If it does, install into that system instead of beside it. Two hook directories means one of them silently never runs.
-3. If a `commit-msg` hook already exists, stop and show it to the user rather than overwriting it.
+1. Check whether hooks are already managed: `git config --get core.hooksPath`, and look for `.husky/`, `lefthook.yml`, `.pre-commit-config.yaml`. If so, install into that system; two hook directories means one silently never runs.
+2. If a `commit-msg` hook exists, stop and show it to the user rather than overwriting it.
 
 ## Install
 
-1. Copy `assets/commit-msg` from this skill's directory into the repository and make it executable:
+1. Copy and make executable:
 
    ```bash
    mkdir -p .githooks
    cp <this-skill>/assets/commit-msg .githooks/commit-msg
    chmod +x .githooks/commit-msg
-   ```
-
-2. Point git at the directory:
-
-   ```bash
    git config core.hooksPath .githooks
    ```
 
-3. Make it hold for every clone. `core.hooksPath` is local configuration and is not committed, so a fresh clone runs no hooks until that command runs there.
-
-   In a Node project, add it to the `prepare` script in `package.json`, so installing dependencies sets it:
+2. Make it hold for every clone: `core.hooksPath` is local, so a fresh clone runs no hooks until that command runs there. In a Node project, add it to `prepare` in `package.json` (chain onto an existing `prepare`, do not replace it):
 
    ```json
    "prepare": "git rev-parse --git-dir >/dev/null 2>&1 && git config core.hooksPath .githooks || true"
    ```
 
-   The guard keeps the install from failing where there is no git directory, such as a container build. If a `prepare` script already exists, chain onto it rather than replacing it.
+   The guard avoids failing where there is no git directory, such as a container build. In other projects, add the command to the README setup steps.
 
-   In any other project, add the command to the setup steps of the README.
-
-4. Stop Claude Code from adding its trailer. By default it appends a `Co-Authored-By:` line to the commits it makes, which the hook rejects as a second line. Merge this key into `.claude/settings.json`, keeping whatever the file already holds:
+3. Stop Claude Code adding its `Co-Authored-By:` trailer, which the hook rejects as a second line. Merge into `.claude/settings.json`, keeping existing content:
 
    ```json
-   {
-     "attribution": {
-       "commit": ""
-     }
-   }
+   { "attribution": { "commit": "" } }
    ```
 
 ## Verify
 
-Run the hook directly against a message file. Nothing is committed.
+Run the hook on message files; nothing is committed.
 
 ```bash
 f=$(mktemp)
-
-printf 'feat: add email validation\n' > "$f"
-.githooks/commit-msg "$f"; echo "exit $?"        # exit 0
-
-printf 'feat(auth): add email validation\n' > "$f"
-.githooks/commit-msg "$f"; echo "exit $?"        # exit 1, "no scope"
-
-printf 'fix: handle empty input\n\nA longer explanation.\n' > "$f"
-.githooks/commit-msg "$f"; echo "exit $?"        # exit 1, "one line only"
-
+printf 'feat: add email validation\n' > "$f"; .githooks/commit-msg "$f"; echo "exit $?"   # 0
+printf 'feat(auth): add email validation\n' > "$f"; .githooks/commit-msg "$f"; echo "exit $?"   # 1, no scope
+printf 'fix: handle empty input\n\nMore.\n' > "$f"; .githooks/commit-msg "$f"; echo "exit $?"   # 1, one line only
 rm "$f"
 ```
 
-Then confirm that `git config --get core.hooksPath` prints `.githooks`.
+Then confirm `git config --get core.hooksPath` prints `.githooks`.
 
 ## Rules
 
-- Never weaken the hook to let a commit through, and never bypass it with `--no-verify`. Fix the message.
-- Changing what the convention allows, such as a scope or a body, is the user's decision. Ask before editing the hook.
-- Report what you installed, what you changed in `package.json` and `.claude/settings.json`, and what the verification printed.
+- Never weaken the hook or bypass it with `--no-verify`; fix the message.
+- Changing what the convention allows (a scope, a body) is the user's decision; ask before editing the hook.
+- Report what you installed, what you changed in `package.json` and `.claude/settings.json`, and what the verification printed, in under 150 words.

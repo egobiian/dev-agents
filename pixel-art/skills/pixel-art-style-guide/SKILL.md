@@ -1,117 +1,43 @@
 ---
 name: pixel-art-style-guide
-description: Writes and maintains the pixel-art style guide of a game — the document that fixes resolution, tile and sprite sizes, perspective, palette, light direction, outlines, shading, animation timing, file conventions and, for art made with an AI generator, the settings every generation uses, so that art made at different times still looks like one game. Use when starting the art of a game, when defining or changing its visual style, when sprites from different sources or sessions do not match, or before asking anyone to draw or generate art. Turns each decision into a rule that can be checked, and says which existing art a change invalidates.
+description: Writes and maintains a game's pixel-art style guide - resolution, sizes, perspective, palette, light, outlines, animation, file conventions and AI-generation settings. Use when starting a game's art, defining or changing its style, when sprites from different sources do not match, or before anyone draws or generates art.
 ---
 
 # Write a pixel-art style guide
 
-Pixel art drifts. Each sprite looks fine alone, and together they look like three different games: one has black outlines, one is lit from the right, one uses a blue nobody else uses. A style guide prevents that by making the decisions once and writing them where everyone who draws will read them.
-
-A rule earns its place when it can be checked: by a script, or by looking at a sprite for a few seconds. "Characters should feel friendly" cannot be checked. "Characters are 16 pixels wide and outlined in the darkest colour of their own ramp" can.
+Pixel art drifts: each sprite looks fine alone and together they look like three games. A style guide makes the decisions once, where everyone who draws will read them. A rule earns its place when a script or a few seconds of looking can check it: "characters are 16 pixels wide, outlined in the darkest colour of their ramp" can be checked; "characters should feel friendly" cannot.
 
 ## Procedure
 
-1. **Look at what exists.** If the game has art, the guide describes it before it prescribes anything. Measure the sprites and tiles, look at them enlarged, and note what they agree on — size, outline, light, palette — and where they disagree. The disagreements are the decisions that have to be made.
+1. **Look at what exists.** Describe the current art before prescribing: measure sprites and tiles, note what they agree on and where they disagree. The disagreements are the decisions to make.
+2. **Ask for what cannot be derived**: mood, references, target resolution, scope come from the owner. Never present a guess as a decision.
+3. **Decide in dependency order**: base resolution and tile size; perspective; character size relative to a tile; palette; light, outline, shading; animation; file conventions.
+4. **Write from** [assets/style-guide-template.md](assets/style-guide-template.md). Fill every section; mark an unneeded one "not used", not deleted.
+5. **State each rule checkably**, with its reason in a clause so someone can handle a case it did not foresee.
+6. **Make a reference sheet** (one character, tile and object following every rule) beside the guide; compare new art with it.
+7. **Put the guide where the art is**, as Markdown, following the project's layout (else `docs/art-style.md`).
 
-2. **Find out what cannot be derived.** The mood, the references, the target resolution and the scope of the game come from whoever owns it. Ask for what is missing. Do not fill a gap with a guess presented as a decision.
+## What the guide decides
 
-3. **Decide in dependency order.** Each of these constrains the next:
-   1. The base resolution, and the tile size.
-   2. The perspective: side view, top-down, three-quarter, isometric.
-   3. The size of a character relative to a tile.
-   4. The palette.
-   5. Light, outline and shading.
-   6. Animation.
-   7. File conventions.
-
-4. **Write it from the template** in [assets/style-guide-template.md](assets/style-guide-template.md). Fill every section. A section the game does not need is marked "not used", not deleted: the next reader then knows it was considered.
-
-5. **State each rule so that it can be checked,** and give the reason in a clause. The reason is what lets someone handle a case the rule did not foresee.
-
-6. **Make a reference sheet.** One character, one tile and one object that follow every rule, kept beside the guide. New art is compared with the sheet, not with a memory of it.
-
-7. **Put the guide where the art is,** in the repository, as Markdown. Follow the project's own layout for documents. If it has none, `docs/art-style.md` is a reasonable place.
-
-## What the guide has to decide
-
-**Resolution and grid**
-
-- The base resolution of the game, in art pixels.
-- The tile size, and the sizes sprites come in: characters, items, icons.
-- One pixel size everywhere. All art is drawn and exported at 1×, and nothing in the game is scaled by a fraction. Mixed pixel sizes are the most visible break in cohesion there is.
-
-**Perspective**
-
-- The projection, and with it which faces of an object are visible and where the ground line is.
-- Where shadows on the ground go, if there are any.
-
-**Palette**
-
-- The palette file, the number of colours, and the ramps with the material each one serves.
-- Roles: the outline colour or colours, the shared shadow colour, the accents reserved for what the player has to notice.
-- What is not allowed: colours outside the file, partial transparency, gradients.
-
-**Light and shading**
-
-- One light direction for all art. Top left is the usual choice.
-- How many shades a material gets, and whether a highlight is a separate step.
-- Whether dithering is allowed, and where. The same for anti-aliasing inside a sprite. Never on the outer edge.
-
-**Outline**
-
-- None, one colour for everything, or a darker shade of whatever is being outlined.
-- Where it is one pixel thick, where it breaks, and whether it is lightened on the side facing the light.
-- Whether characters are outlined and the environment is not. This is a common way to make what moves stand out from what does not.
-
-**Shapes and readability**
-
-- Proportions: how many pixels tall a character is, and how large its head is.
-- The level of detail that goes with each sprite size.
-- How the foreground is kept apart from the background: contrast, saturation, outline.
-
-**Animation**
-
-- The frames each action gets, and how long a frame lasts.
-- Where the pivot is — bottom centre for anything that stands on the ground — and that it does not move between frames.
-- The sheet layout: frame size, direction, padding.
-
-**Tiles**
-
-- Which tiles have to repeat seamlessly, how many variants a surface gets, and how transitions between surfaces are laid out.
-
-**Interface**
-
-- The fonts and the sizes they are used at, in whole multiples of their design size.
-- Icon sizes, and how panels and buttons are drawn.
-
-**Generation**
-
-Only when art is made with an AI generator. Separate generations drift faster than separate drawings, so the guide fixes what every call passes:
-
-- The tool for each kind of asset, and the settings passed on every call: view, outline, shading, detail, canvas size.
-- The words every description ends with, stating the look in a few plain phrases. Describe the look in the game's own words: a prompt that names another game, artist or brand imitates someone else's work.
-- Which accepted asset is the style reference for each kind: the first character for every other character, the first tileset for the next.
-- How a result is brought onto the palette, and what is cleaned by hand afterwards.
-- Where the record of how each asset was made is kept, and where the generator's ids are kept. Ids identify an account: they stay in a local file that is never committed.
-
-**Files**
-
-- Where source files and exported PNGs live, and how they are named.
-- Which is the source of truth when both exist.
+- **Resolution and grid**: base resolution in art pixels; tile size; sprite sizes (characters, items, icons). One pixel size everywhere, all art at 1x, nothing scaled by a fraction.
+- **Perspective**: projection, visible faces, ground line, ground shadows if any.
+- **Palette**: file, colour count, ramps and their materials, roles (outline, shared shadow, accents), what is banned (colours outside the file, partial transparency, gradients).
+- **Light and shading**: one light direction; shades per material and whether a highlight is its own step; dithering and anti-aliasing inside a sprite (never on the outer edge).
+- **Outline**: none, one colour, or a darker shade of what it outlines; thickness and breaks; lightened on the lit side or not; characters outlined and environment not.
+- **Shapes and readability**: character height and head size, detail per sprite size, how foreground separates from background.
+- **Animation**: frames per action, frame duration, pivot (bottom centre for grounded things, fixed between frames), sheet layout.
+- **Tiles**: which repeat seamlessly, variants per surface, transition layout.
+- **Interface**: fonts and sizes (whole multiples of design size), icon sizes, how panels and buttons are drawn.
+- **Generation** (only for art from an AI generator, which drifts faster): the tool per asset kind; settings on every call (view, outline, shading, detail, canvas); the words every description ends with, in the game's own words, never naming another game, artist or brand; the style-reference asset per kind; how results are brought onto the palette and cleaned; the generation budget per phase (mock-up, pilot, production) and the limit above which the owner is asked; where the record of how each asset was made lives and where the generator's ids live (they identify an account: a local file never committed).
+- **Files**: where sources and exported PNGs live and how they are named; which is the source of truth.
 
 ## Changing the guide
 
-A change to the guide is a change to every sprite already drawn under it. Before changing a rule:
-
-- List the existing art that the new rule makes wrong.
-- Say whether that art is to be redrawn, and by when, or left as a known exception.
-- Give the change a date in the guide's change log, with its reason.
-
-A rule the art has stopped following is worse than no rule. Either the art changes or the rule does.
+A change is a change to every sprite drawn under it. List the art the new rule makes wrong, say whether it is redrawn (by when) or a known exception, and date the change in the guide's log with its reason. A rule the art has stopped following is worse than none.
 
 ## Common failures
 
-- **A mood board instead of rules.** Adjectives and reference images that leave every decision to whoever draws next.
-- **Rules without numbers.** "Small outline" and "limited palette" where "one pixel" and "24 colours, listed in `palette.hex`" were available.
-- **A guide nobody can find.** Kept in a chat, a design tool or someone's head rather than next to the art.
-- **Decisions made by accident.** The first sprite drawn becomes the style because nobody wrote down a choice. Describe it, decide whether to keep it, and write the answer.
+- A mood board instead of rules.
+- Rules without numbers ("small outline" for "one pixel").
+- A guide nobody can find.
+- Decisions made by accident: the first sprite becomes the style. Describe it, decide, write the answer.

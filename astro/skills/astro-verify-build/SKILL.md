@@ -1,40 +1,34 @@
 ---
 name: astro-verify-build
-description: Pre-commit gate for Astro projects. Use before every commit that touches source in an Astro site, or when asked to verify, check or validate an Astro build. Verifies types with astro check, lint and formatting, the production build, and — when the commit touches a page — that the built pages actually render and behave. Reports which gates ran and what they said.
+description: Pre-commit gate for Astro projects. Use before every commit touching an Astro site's source, or to verify, check or validate an Astro build. Runs astro check, lint and format check, the production build, and, for visible changes, the served pages. Reports which gates ran and what they said.
 ---
 
 # Verify an Astro build before committing
 
-Four gates, in order. Gates 1–3 always run. Gate 4 runs when the commit touches anything under `src/` that a visitor can see. A commit only happens when every gate that applies is green. Never report a gate as passing without having run it and read its output.
+Four gates, in order. Gates 1-3 always run; Gate 4 runs when the commit touches anything under `src/` a visitor can see. Commit only when every gate that applies is green. Never report a gate as passing without running it and reading its output.
 
-A commit that touches only documentation, or files the build never reads, has no source to verify. Say so plainly and skip, rather than inventing a green run.
+A commit touching only documentation or files the build never reads has nothing to verify: say so and skip.
 
-Use the project's own scripts: `package.json` names them, and the lockfile tells you the package manager. The commands below show what each gate has to run, written for npm.
+Use the project's own scripts (`package.json` names them, the lockfile the package manager). Commands below are for npm.
 
 ## Gate 1 — Types
 
 ```bash
-npm run typecheck    # the script that runs: astro check
+npm run typecheck    # astro check
 ```
 
-`astro check` typechecks the `.astro` templates as well as the TypeScript. `tsc --noEmit` is not a substitute: it ignores `.astro` files entirely, so it exits clean on a template that does not compile.
-
-It needs the `@astrojs/check` package. If the project does not have it, say so and ask before adding it, rather than falling back to `tsc`.
-
-A clean type check says nothing certain about the content entries themselves. An entry that violates its collection schema is only certain to fail in Gate 3.
+`astro check` typechecks `.astro` templates; `tsc --noEmit` ignores them and exits clean on a template that does not compile. It needs `@astrojs/check`; if missing, say so and ask before adding it, rather than falling back to `tsc`. A clean check says nothing certain about content entries: a schema violation only fails in Gate 3.
 
 ## Gate 2 — Lint and format
 
 ```bash
 npm run lint
-npm run format:check    # the formatter in check mode
+npm run format:check
 ```
 
-Run whatever linters the project has — ESLint, Stylelint — and the formatter in check mode. A project with none of them has no Gate 2: report it as absent, never as passing.
+Run the project's linters (ESLint, Stylelint) and the formatter in check mode. None present means absent, never passing.
 
-Check mode, never write mode: a gate that silently reformats hides what the commit actually contains. If the project only has a script that writes, do not append `--check` to it. The write flag is still in the script, so the formatter fixes the files and exits 0 — a green light that changed the working tree instead of inspecting it. Call the check mode directly, for example `npx prettier --check .`.
-
-A lint failure is fixed at its cause, never with a disable comment.
+Check mode, never write mode. If the project's script writes, do not append `--check`: the write flag remains, the formatter fixes the files and exits 0. Call the check mode directly (`npx prettier --check .`). Fix lint failures at the cause, never with a disable comment.
 
 ## Gate 3 — The production build
 
@@ -42,35 +36,25 @@ A lint failure is fixed at its cause, never with a disable comment.
 npm run build    # astro build
 ```
 
-This is where content collections are actually validated. Astro reads every entry against its schema at build time, so an entry missing a required field, or carrying a value outside an `enum`, fails here and nowhere earlier.
-
-It is also where the runtime import graph is resolved. A missing stylesheet, an asset path that does not exist, or a component imported under the wrong name can all typecheck cleanly and only fail at this gate.
-
-Read the whole output, not just the exit code. Astro reports warnings — a route collision, a collection with no entries — while still exiting 0, and each of those is a failure here until it is explained.
+This validates every content entry against its schema (a missing required field or a value outside an `enum` fails only here) and resolves the real import graph (missing stylesheet, bad asset path, wrong component name). Read the whole output: Astro prints warnings (route collision, empty collection) while exiting 0, and each is a failure until explained.
 
 ## Gate 4 — The site as served
 
-Skip only when the commit changes nothing a visitor can see.
-
-The first three gates prove the site compiles. None of them proves a page renders: a component can bundle cleanly and then produce empty markup, a grid can collapse, a colour can end up unreadable.
+Skip only when the commit changes nothing a visitor can see. Gates 1-3 do not prove a page renders: it can bundle and still produce empty markup or a collapsed grid.
 
 ```bash
 npm run preview    # astro preview
 ```
 
-Then exercise what the commit changed. Preview serves the real build; the dev server does not, and a check against `astro dev` verifies bytes that never ship.
+Exercise what the commit changed against preview, never `astro dev`, which does not serve what ships.
 
-When the project has a browser test suite, running it is the mechanical half of this gate. Confirm that it runs against the build rather than the dev server. A run reporting no tests found is a failure: it means the runner is looking somewhere the specs are not, and every assertion is silently absent. Read the count, not just the exit code.
+If the project has a browser test suite, run it against the build. "No tests found" is a failure (the runner is looking elsewhere); read the count, not the exit code.
 
-What a suite does not cover, someone has to look at:
-
-- A commit that changes what a page looks like is not verified until the page has been opened and looked at. A test asserts on structure and computed styles; it has no opinion about whether the result reads well.
-- Check the change at a narrow viewport too. A layout that is fine at 1440 pixels can be unreadable at 360.
-- Check it with `prefers-reduced-motion: reduce`. Nothing the commit animates may still move.
-- Check the page with JavaScript disabled when the commit adds a client script. The content has to be readable without it.
+Beyond the suite, only for visual changes or when the caller asks, open and look at the page:
+- at a narrow viewport (360 px) as well as wide;
+- with `prefers-reduced-motion: reduce`: nothing the commit animates may move;
+- with JavaScript disabled if a client script was added.
 
 ## Reporting
 
-State plainly which gates ran, which were skipped or absent and why, and what each said. If a gate fails, fix the cause and re-run from Gate 1. Never commit around a failure, and never describe a skipped gate as passing.
-
-Passing the gates is not the same as the work being right. The gates catch what a machine can catch; whether the change is consistent with the design and usable still needs a review.
+State which gates ran, which were skipped or absent and why, and what each said, in under 150 words. On failure, fix the cause and re-run from Gate 1. Never commit around a failure or call a skipped gate passing. Green gates do not mean the work is right; design consistency and usability still need review.
