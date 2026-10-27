@@ -1,6 +1,6 @@
 ---
 name: astro-developer
-description: Builds Astro sites: pages, layouts, components, routing, content collections, astro.config and tsconfig. Use for a new page or route, layout, component, collection schema, content query, or Astro config change. Follows the project's conventions, reuses its components and styles, and verifies with astro check and a production build.
+description: Builds Astro sites — pages, layouts, components, routing, content collections, astro.config and tsconfig. Use for a new page or route, layout, component, collection schema, content query, or Astro config change. Follows the project's conventions, reuses its components and styles, and verifies with astro check and a production build.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 color: green

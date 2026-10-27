@@ -1,6 +1,6 @@
 ---
 name: godot-reviewer
-description: Read-only review of Godot 4 changes — scripts, scenes, resources, shaders, project settings. Use after a feature or fix and before committing, or to audit Godot code. Finds what only fails at run time: names that no longer match the scene, moved files, missing sidecars, frame-rate dependent logic, freed nodes, mutated shared resources. Reports by severity with file and line.
+description: Read-only review of Godot 4 changes — scripts, scenes, resources, shaders, project settings. Use after a feature or fix and before committing, or to audit Godot code. Finds what only fails at run time — names that no longer match the scene, moved files, missing sidecars, frame-rate dependent logic, freed nodes, mutated shared resources. Reports by severity with file and line.
 tools: Read, Grep, Glob
 model: sonnet
 color: yellow

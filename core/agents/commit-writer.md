@@ -1,6 +1,6 @@
 ---
 name: commit-writer
-description: Writes and creates a single-line Conventional Commit from the staged diff, after checking that nothing private or local-only is staged. Use after finishing a unit of work, on "commit this", or to amend or reword a commit message. Header only: no scope, body, footers or breaking-change marker.
+description: Writes and creates a single-line Conventional Commit from the staged diff, after checking that nothing private or local-only is staged. Use after finishing a unit of work, on "commit this", or to amend or reword a commit message. Header only — no scope, body, footers or breaking-change marker.
 tools: Bash, Read, Grep, Glob
 model: sonnet
 color: orange

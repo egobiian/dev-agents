@@ -1,6 +1,6 @@
 ---
 name: python-developer
-description: Builds Python code: packages, modules, command-line tools and services, with tests and pyproject.toml. Use for a new module or feature, bug fix, refactor, test or dependency change. Follows the project's tooling and conventions, runs everything in its environment, and verifies with its linter, type checker and test suite.
+description: Builds Python code — packages, modules, command-line tools and services, with tests and pyproject.toml. Use for a new module or feature, bug fix, refactor, test or dependency change. Follows the project's tooling and conventions, runs everything in its environment, and verifies with its linter, type checker and test suite.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 color: blue

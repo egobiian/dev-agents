@@ -1,6 +1,6 @@
 ---
 name: git-commit-hook
-description: Installs a commit-msg git hook enforcing single-line Conventional Commit headers: known type, no scope or "!" marker, lowercase description, no trailing period, 72 characters, no body, footers or trailers. Use when setting up a repository, adding a commit hook, enforcing the commit convention, or when bad commit messages get through.
+description: Installs a commit-msg git hook enforcing single-line Conventional Commit headers — known type, no scope or "!" marker, lowercase description, no trailing period, 72 characters, no body, footers or trailers. Use when setting up a repository, adding a commit hook, enforcing the commit convention, or when bad commit messages get through.
 ---
 
 # Install the commit message hook
