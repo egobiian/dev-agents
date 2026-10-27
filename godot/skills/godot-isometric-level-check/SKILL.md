@@ -43,9 +43,10 @@ Run it on every level a change can affect; a change to the player's shape, a pro
 - `FAIL reachable floor outside the camera limits`: the first `Camera2D` of the level, or of the `--player` scene, does not cover reachable floor. No camera: the limits are skipped and the summary says so.
 - `FAIL … no navigation path to the spawn`, `no NavigationRegion2D with a baked polygon`: the bake is missing, or enemies stand outside it or on an island of it.
 - `FAIL the navigation polygon is inset … but the enemies' collision shape reaches …`: the polygon's agent radius is smaller than how far the enemies' shapes reach from their feet, so the bake is stale. Rebake.
+- `FAIL navigation misses reachable floor: rebake`: more than 2 % of the reachable floor farther from any solid than the agent radius is outside the baked polygon, so a wall or prop was removed or moved after the bake. `FAIL navigation covers walls or props: rebake`: the polygon covers the centre of a wall cell or a prop's base, so one was added after the bake. Both are skipped by `--no-navigation`.
 - The last line always starts with `level_check:`. Without it, nothing was checked. Exit 0 is a pass, 1 a failure, 2 bad arguments.
 
-On failure, open the map: walls grey, props brown, reachable floor green, unreachable floor red, spawn blue, enemies white, required nodes yellow, the navigation outline magenta. Fix the level, never the check, and rerun.
+On failure, open the map: walls grey, props brown, reachable floor green, unreachable floor red, spawn blue, enemies white, required nodes yellow, the navigation outline magenta, floor the navigation misses cyan, wall or prop centres it covers orange. Fix the level, never the check, and rerun.
 
 ## What the level has to follow
 

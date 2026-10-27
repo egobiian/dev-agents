@@ -8,7 +8,10 @@
 ##   - an enemy has no navigation path to the spawn on the level's
 ##     NavigationRegion2D polygons, or the level has no baked polygon,
 ##   - the polygons' inset from walls and props (the agent radius) is smaller
-##     than the enemies' reach from their feet: the bake is stale.
+##     than the enemies' reach from their feet: the bake is stale,
+##   - reachable floor well clear of every solid is missing from the baked
+##     polygons, or the polygons cover the centre of a wall cell or a prop's
+##     base: walls or props changed after the bake.
 ##
 ## Usage:
 ##   godot --headless --path <project> --script <absolute path to this file> -- <res://level.tscn> [options]
@@ -36,7 +39,8 @@
 ##   --image <absolute.png>   Write a map, one pixel per sample: walls grey, props
 ##                            brown, reachable floor green, unreachable floor red,
 ##                            spawn blue, enemies white, required nodes yellow, the
-##                            navigation outline magenta.
+##                            navigation outline magenta, floor the navigation
+##                            misses cyan, wall or prop centres it covers orange.
 ##
 ## Exit codes: 0 pass, 1 fail, 2 bad arguments. The last line printed always
 ## starts with `level_check:`.
@@ -45,6 +49,11 @@ extends SceneTree
 const MAX_LISTED: int = 8
 const SYNC_FRAMES: int = 10
 const PATH_END_SLACK: float = 1.0
+const NAV_MARGIN: float = 4.0
+const NAV_TOLERANCE: float = 1.0
+# Bake simplification and cell snapping leave a few stray samples off the polygon; a stale bake misses whole areas.
+const NAV_MISS_SHARE: float = 0.02
+const NAV_STRIDE_PX: int = 16
 const VALUE_OPTIONS: PackedStringArray = [
 	"spawn-group", "enemy-group", "required-group", "solid-group", "wall-layer",
 	"world-mask", "player", "player-group", "size", "reach", "step", "image",
@@ -60,6 +69,8 @@ const SPAWN: Color = Color8(50, 110, 255)
 const ENEMY: Color = Color8(255, 255, 255)
 const REQUIRED: Color = Color8(255, 215, 0)
 const NAVIGATION: Color = Color8(255, 70, 220)
+const NAV_MISSED: Color = Color8(0, 230, 230)
+const NAV_COVERED: Color = Color8(255, 150, 0)
 
 var _spawn_group: StringName = &"player_spawn"
 var _enemy_group: StringName = &"enemies"
@@ -88,6 +99,9 @@ var _box: Rect2i
 var _grid: TileMapLayer
 var _failures: PackedStringArray = []
 var _paths: int = 0
+var _solid_centres: PackedVector2Array = []
+var _missed: PackedVector2Array = []
+var _covering: PackedVector2Array = []
 
 
 func _initialize() -> void:
@@ -208,7 +222,7 @@ func _check(level: Node) -> String:
 	if not _failures.is_empty():
 		if player_instance != null:
 			player_instance.free()
-		return "FAIL, %d problems" % _failures.size()
+		return "FAIL, %d problem%s" % [_failures.size(), "" if _failures.size() == 1 else "s"]
 
 	_rasterize(layers, bodies)
 	_box = _player_box(player_shapes)
@@ -261,7 +275,7 @@ func _check(level: Node) -> String:
 	if not _image_path.is_empty():
 		_save_image(spawn, enemies, required, regions)
 	return "%s, %d enemies, %d required, %.1f%% of the floor reachable, %s%s%s" % [
-		"FAIL, %d problems" % _failures.size() if not _failures.is_empty() else "OK",
+		"FAIL, %d problem%s" % [_failures.size(), "" if _failures.size() == 1 else "s"] if not _failures.is_empty() else "OK",
 		enemies.size(),
 		required.size(),
 		100.0 * reachable_floor / maxi(floor_samples, 1),
@@ -421,9 +435,46 @@ func _check_navigation(level: Node, regions: Array[NavigationRegion2D], spawn: N
 		_failures.append("the navigation map did not synchronise within %d physics frames" % SYNC_FRAMES)
 	else:
 		_query_paths(level, map, inset, spawn, enemies)
+		_check_stale(map, inset)
 	for rid: RID in rids:
 		NavigationServer2D.free_rid(rid)
 	NavigationServer2D.free_rid(map)
+
+
+## Walls or props changed after the bake leave floor outside the polygon or polygon over solids.
+func _check_stale(map: RID, inset: float) -> void:
+	var clear: int = ceili((inset + NAV_MARGIN) / _step)
+	var stride: int = maxi(NAV_STRIDE_PX / _step, 1)
+	var table: PackedInt32Array = _table(func(index: int) -> bool: return not _ground[index] or _wall[index] or _prop[index])
+	var tested: int = 0
+	var missed: PackedVector2Array = []
+	for row: int in range(clear, _rows - clear, stride):
+		for column: int in range(clear, _columns - clear, stride):
+			var sample: Vector2i = Vector2i(column, row)
+			if not _reachable[_index(sample)] or _count(table, sample - Vector2i.ONE * clear, sample + Vector2i.ONE * clear) > 0:
+				continue
+			tested += 1
+			var point: Vector2 = _position_of(sample)
+			if NavigationServer2D.map_get_closest_point(map, point).distance_to(point) > NAV_TOLERANCE:
+				missed.append(point)
+	if tested > 0 and missed.size() > NAV_MISS_SHARE * tested:
+		_failures.append("navigation misses reachable floor: rebake (%d of %d clear samples, e.g. %s)" % [missed.size(), tested, _list(missed)])
+		_missed = missed
+	var covering: PackedVector2Array = []
+	for point: Vector2 in _solid_centres:
+		if NavigationServer2D.map_get_closest_point(map, point).distance_to(point) <= NAV_TOLERANCE:
+			covering.append(point)
+	if not covering.is_empty():
+		_failures.append("navigation covers walls or props: rebake (%d of %d centres, e.g. %s)" % [covering.size(), _solid_centres.size(), _list(covering)])
+		_covering = covering
+
+
+func _list(points: PackedVector2Array) -> String:
+	var parts: PackedStringArray = []
+	for index: int in mini(points.size(), 3):
+		var point: Vector2 = points[index * points.size() / mini(points.size(), 3)]
+		parts.append(_describe(point))
+	return "; ".join(parts)
 
 
 ## A path to an unreachable target stops at the reachable point nearest it, so it has to end at the
@@ -501,9 +552,18 @@ func _rasterize(layers: Array[TileMapLayer], bodies: Array[Node2D]) -> void:
 		_fill_polygon(_ground, polygon)
 	for polygon: PackedVector2Array in walls:
 		_fill_polygon(_wall, polygon)
+		_solid_centres.append(_centroid(polygon))
 	for body: Node2D in bodies:
 		for polygon: PackedVector2Array in _shape_polygons(body, _global_xform(body)):
 			_fill_polygon(_prop, polygon)
+			_solid_centres.append(_centroid(polygon))
+
+
+func _centroid(polygon: PackedVector2Array) -> Vector2:
+	var sum: Vector2 = Vector2.ZERO
+	for point: Vector2 in polygon:
+		sum += point
+	return sum / polygon.size()
 
 
 func _player_box(shapes: Node) -> Rect2i:
@@ -650,6 +710,10 @@ func _save_image(spawn: Node2D, enemies: Array[Node2D], required: Array[Node2D],
 	var image: Image = Image.create_from_data(_columns, _rows, false, Image.FORMAT_RGB8, pixels)
 	for region: NavigationRegion2D in regions:
 		_draw_outline(image, region)
+	for point: Vector2 in _missed:
+		_mark(image, point, 1, NAV_MISSED)
+	for point: Vector2 in _covering:
+		_mark(image, point, 1, NAV_COVERED)
 	for node: Node2D in required:
 		_mark(image, _global_xform(node).origin, 3, REQUIRED)
 	for enemy: Node2D in enemies:
