@@ -1,14 +1,12 @@
 ---
 name: godot-2d-platformer-level-check
-description: Proves that a level of a side-view 2D platformer made in Godot 4 can be finished. A bundled script simulates the player's run, jump, fall and drop-through from the project's own movement values, from every place the player can stand, and fails on an impossible jump, a pit or a corner the player cannot get out of, and a checkpoint or collectible nobody can reach; it can draw a map of what it found. Use after building or changing a level, after changing the player's movement or its tuning, before committing either, or when asked whether a level is beatable, fair or has softlocks.
+description: Proves a side-view 2D platformer level in Godot 4 can be finished. A bundled script simulates run, jump, fall and drop-through from the project's movement values and fails on impossible jumps, inescapable pits and unreachable checkpoints; it can draw a map. Use after changing a level or the player's movement, or to check a level is beatable, fair or free of softlocks.
 compatibility: Needs the Godot 4 editor binary. The bundled script needs Godot 4.4 or later.
 ---
 
 # Check that a level can be finished
 
-Playing a level proves that one route works for one player on one try. It does not prove that the jump at the end works with a little less speed, or that the player who falls into the side pit can climb out. The script in [scripts/level_check.gd](scripts/level_check.gd) proves both, in a second or two, by searching every place the player can reach.
-
-Paths to `scripts/` are relative to this skill's directory. Give Godot the absolute path.
+Playing a level proves one route for one player on one try. [scripts/level_check.gd](scripts/level_check.gd) searches every place the player can reach and proves the last jump works with a little less speed and that a side pit can be climbed out of. `scripts/` is relative to this skill's directory; give Godot the absolute path.
 
 ## Run it
 
@@ -21,7 +19,7 @@ godot --headless --path . --script /abs/path/to/scripts/level_check.gd -- \
   --image /tmp/level-maps/cave.png 2>&1
 ```
 
-Run it on every level the change can affect. A change to the player's movement or to its tuning affects all of them.
+Run it on every level the change can affect; a change to movement or tuning affects all of them.
 
 | Option | What it gives |
 | :- | :- |
@@ -33,22 +31,22 @@ Run it on every level the change can affect. A change to the player's movement o
 | `--drop-layer platforms` | The physics layer whose one-way platforms the player can drop through |
 | `--image <absolute.png>` | Writes a map of the level and of what the search found |
 
-When the project names its movement values differently, pass them as single values, or give the resource properties with these names. Read them from the code that moves the player, never from a comment.
+If the project names its movement values differently, pass single values. Read them from the code that moves the player, never from a comment.
 
 ## What it reports
 
-The first line names the level and the physics it used. Read it: a jump height that is not the one the game has means the values came from the wrong place.
+The first line names the level and the physics used; a jump height that is not the game's means the values came from the wrong place.
 
 - `FAIL the goal cannot be reached from the spawn. The route ends at feet (x, y)`: the furthest point the player gets to. The impossible jump is just past it.
 - `FAIL trap: the goal cannot be reached from feet x a..b, y c`: a place the player can get into and not out of. Usually a pit too deep to jump out of, or a ledge dropped onto from above that leads nowhere.
 - `FAIL checkpoint <path> cannot be reached`, `FAIL must_reach <path> cannot be reached`: no reachable place to stand within 24 px of that node.
 - The last line always starts with `level_check:`. Without it, nothing was checked. Exit 0 is a pass, 1 a failure, 2 bad arguments.
 
-When it fails, open the map. Solids are grey, one-way platforms brown, crumbling platforms tan, the lines of moving platforms steel blue, hazards magenta, ground the player can reach and still finish from green, traps red, the spawn blue, the goal yellow, checkpoints orange and places that must be reached cyan. Fix the level, never the check, and run it again.
+On failure, open the map: solids grey, one-way brown, crumbling tan, moving-platform lines steel blue, hazards magenta, reachable finishable ground green, traps red, spawn blue, goal yellow, checkpoints orange, must-reach places cyan. Fix the level, never the check, and rerun.
 
 ## What the level has to follow
 
-The script reads the level the way the game builds it. It relies on these conventions; a level that breaks them gets a wrong answer, not an error.
+A level that breaks these conventions gets a wrong answer, not an error.
 
 - **Terrain:** `TileMapLayer` cells with a collision polygon count as the full cell. One-way polygons are platforms. `StaticBody2D` children with a `RectangleShape2D` count too. No slopes.
 - **Spawn:** exactly one node in group `player_spawn`, at the player's feet.
@@ -61,14 +59,14 @@ The script reads the level the way the game builds it. It relies on these conven
 
 ## What it does not simulate
 
-It is a model of a plain platformer seen from the side: run with acceleration, one jump at full height from a standstill, gravity that may be stronger on the way down, walking off ledges, dropping through platforms. Top-down, isometric and 3D levels move by other rules: this check says nothing about them. It does not know:
+It models a plain side-view platformer: accelerated run, one full-height jump from a standstill, stronger fall gravity, walking off ledges, dropping through platforms. It says nothing about top-down, isometric or 3D levels, and does not know:
 
 - double jumps, wall jumps, dashes, coyote time or jump buffering. A route that needs one is reported impossible. The check is then conservative: design the main route without them, or extend the script with the move;
 - enemies, other moving bodies, doors, switches that change the level, slopes;
 - whether a route is fun, readable or fair to someone seeing it for the first time.
 
-A route that depends on any of these is checked by playing it.
+Check routes that depend on these by playing.
 
 ## Report
 
-The `level_check:` line of every level checked, every `FAIL` line, and what was fixed. Say which levels were not checked and why.
+The `level_check:` line of every level, every `FAIL` line, what was fixed, and which levels were not checked and why, in under 150 words.
