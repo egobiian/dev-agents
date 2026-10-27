@@ -31,7 +31,7 @@ Keep `agents/` and `skills/` flat. An installed skill has to sit directly under 
 Skills follow the [Agent Skills specification](https://agentskills.io/specification).
 
 1. Copy `templates/skill-template/` to `<section>/skills/<name>/` and set `name` to the directory name.
-2. Write `description` in the third person: what the skill does, then when to use it, with the keywords a user would type. Maximum 1024 characters.
+2. Write `description` in the third person: what the skill does, then when to use it, with the keywords a user would type. Aim for 50 words; the spec allows 1024 characters, but every description is loaded on every turn.
 3. Keep the frontmatter to the portable fields: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`. Tools other than Claude Code reject or ignore anything else.
 4. Use a Claude Code-only field (`paths`, `disable-model-invocation`, `context`, `argument-hint`, `when_to_use`) only when the skill needs it, and then add `compatibility: Designed for Claude Code`.
 5. Keep `SKILL.md` under 500 lines. Put detailed docs in `references/`, executable code in `scripts/` and templates or data in `assets/`. Link them from `SKILL.md` with relative paths, one level deep.
@@ -44,12 +44,20 @@ A script that several skills need is copied into each of them, so that every ski
 Subagents follow the [Claude Code subagent format](https://code.claude.com/docs/en/sub-agents).
 
 1. Copy `templates/agent-template.md` to `<section>/agents/<name>.md` and set `name` to the filename without `.md`.
-2. Write `description` as the delegation trigger: what the agent does and when Claude should hand work to it. Add "Use proactively" when it should run without being asked.
+2. Write `description` as the delegation trigger: what the agent does and when Claude should hand work to it, in about 50 words. Add "Use proactively" when it should run without being asked.
 3. List only the tools the agent needs in `tools`. A read-only reviewer gets `Read, Grep, Glob`, not the full set.
-4. Leave `model` out unless the agent needs a specific one. Frontmatter fields are camelCase and case-sensitive.
+4. Set `model` to the cheapest model that does the job well: `sonnet` for agents that build or review, `haiku` for mechanical work such as commits or running checks. Use `inherit` only when the agent must reason as hard as the main session. Frontmatter fields are camelCase and case-sensitive.
 5. Write the body as a self-contained system prompt. A subagent receives only that body plus basic environment details, so it knows nothing about this repo or the conversation that invoked it.
+   - Write only what the model cannot infer: the stack's traps, the order of work, the checks and the boundaries. General knowledge of the language or its style guide is already in the model.
+   - Verify cheap to expensive: compile, run and read the output first; screenshots and captures only when the change is visual or the caller asks.
+   - Close the body with the report the caller needs and a word limit, 150 words by default.
+   - Keep the style, palette, story and content of a project out of the body. The agent reads them from the project's own files, which the user writes.
 6. When the agent works with a skill of its own section, list that skill in `skills` so that it is preloaded, and say in the body where to find it when it is not. The section `README.md` then says that the section is to be copied whole.
 7. Add a row to the section `README.md`.
+
+## Keeping them lean
+
+Every installed description sits in the main session's context on every turn, and every body is read again each time its agent starts. Short descriptions and bodies that say only what the model would get wrong are what keep a project that installs many of them cheap to run. `core/skills/delegate-work` holds the rules for the session that uses them.
 
 ## Adding a section
 
